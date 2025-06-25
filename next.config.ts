@@ -6,8 +6,6 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Ensure static export works for GitHub Pages
-  distDir: 'out',
 };
 
 export default nextConfig;
