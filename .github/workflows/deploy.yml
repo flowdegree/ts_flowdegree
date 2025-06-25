@@ -51,10 +51,24 @@ jobs:
           static_site_generator: next
 
       - name: Build with Next.js
-        run: pnpm build
+        run: |
+          echo "Starting Next.js build..."
+          pnpm build
+          echo "Build completed"
         
-      - name: List build output
-        run: ls -la
+      - name: Check build output
+        run: |
+          echo "Listing root directory:"
+          ls -la
+          echo "Checking if out directory exists:"
+          if [ -d "out" ]; then
+            echo "out directory found"
+            ls -la out/
+          else
+            echo "out directory not found"
+            echo "Checking .next directory:"
+            ls -la .next/ || echo ".next directory not found"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
