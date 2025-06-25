@@ -1,8 +1,8 @@
-name: Deploy Next.js to GitHub Pages
+name: Deploy Next.js site to Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -21,54 +21,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          static_site_generator: next
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        with:
-          static_site_generator: next
-
       - name: Build with Next.js
+        run: pnpm build
+        env:
+          NODE_ENV: production
+
+      - name: Debug - List build output
         run: |
-          echo "Starting Next.js build..."
-          pnpm build
-          echo "Build completed"
-        
-      - name: Check build output
-        run: |
-          echo "Listing root directory:"
+          echo "=== Root directory ==="
           ls -la
-          echo "Checking if out directory exists:"
-          if [ -d "out" ]; then
-            echo "out directory found"
-            ls -la out/
-          else
-            echo "out directory not found"
-            echo "Checking .next directory:"
-            ls -la .next/ || echo ".next directory not found"
-          fi
+          echo "=== .next directory ==="
+          ls -la .next/ || echo ".next directory not found"
+          echo "=== out directory ==="
+          ls -la out/ || echo "out directory not found"
+          echo "=== Checking for export marker ==="
+          find . -name "export-marker.json" -type f 2>/dev/null || echo "No export marker found"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

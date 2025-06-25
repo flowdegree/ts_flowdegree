@@ -53,14 +53,18 @@ export const metadata: Metadata = {
   authors: [{ name: "FlowDegree" }],
   creator: "FlowDegree",
   publisher: "FlowDegree",
-  metadataBase: new URL("https://flowdegree.com"),
+  metadataBase: new URL(process.env.NODE_ENV === 'production' 
+    ? "https://flowdegree.com" 
+    : "http://localhost:3000"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "FlowDegree - Bots, Automations & Integrations",
     description: "Professional automation and integration services. We specialize in bots, web scraping, API development, and serverless optimization.",
-    url: "https://flowdegree.com",
+    url: process.env.NODE_ENV === 'production' 
+      ? "https://flowdegree.com" 
+      : "http://localhost:3000",
     siteName: "FlowDegree",
     images: [
       {
@@ -116,8 +120,12 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "FlowDegree",
-              "url": "https://flowdegree.com",
-              "logo": "https://flowdegree.com/icon1.png",
+              "url": process.env.NODE_ENV === 'production' 
+                ? "https://flowdegree.com" 
+                : "http://localhost:3000",
+              "logo": (process.env.NODE_ENV === 'production' 
+                ? "https://flowdegree.com" 
+                : "http://localhost:3000") + "/icon1.png",
               "description": "Transform your ideas into seamless automations and integrations. We tackle complex problems with precision using cutting-edge technologies.",
               "email": "root@flowdegree.com",
               "sameAs": [],
